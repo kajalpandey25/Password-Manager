@@ -102,33 +102,36 @@ const Manager = () => {
         </div>
 
         <div className="passwords">
-          <h2>Your Passwords</h2>
-          <table className="table-auto w-full rounded-md overflow-hidden">
-            <thead className="bg-green-800 text-white">
-              <tr>
-                <th className="py-2">Song</th>
-                <th className="py-2">Artist</th>
-                <th className="py-2">Year</th>
-              </tr>
-            </thead>
-            <tbody className="bg-green-100">
-              <tr>
-                <td className="text-center w-32">The Sliding Mr. Bones (Next Stop, Pottersville)</td>
-                <td className="text-center w-32">Malcolm Lockyer</td>
-                <td className="text-center w-32">1961</td>
-              </tr>
-              <tr>
-                <td className="text-center w-32">Witchy Woman</td>
-                <td className="text-center w-32">The Eagles</td>
-                <td className="text-center w-32">1972</td>
-              </tr>
-              <tr>
-                <td className="text-center w-32">Shining Star</td>
-                <td className="text-center w-32">Earth, Wind, and Fire</td>
-                <td className="text-center w-32">1975</td>
-              </tr>
-            </tbody>
-          </table>
+          <h2 className="font-bold text-2xl py-4">Your Passwords</h2>
+          {passwordArray.length === 0 && <div>No password to show</div>}
+          {passwordArray.length != 0 && (
+            <table className="table-auto w-full rounded-md overflow-hidden">
+              <thead className="bg-green-800 text-white">
+                <tr>
+                  <th className="py-2">Site</th>
+                  <th className="py-2">Username</th>
+                  <th className="py-2">Password</th>
+                </tr>
+              </thead>
+              <tbody className="bg-green-100">
+                {passwordArray.map((item, index) => {
+                  return (
+                    <tr key={index}>
+                      <td className="py-2 border border-white text-center w-32">
+                        <a href={item.site} target='_black'>{item.site}</a>
+                      </td>
+                      <td className="py-2 border border-white text-center w-32">
+                        {item.username}
+                      </td>
+                      <td className="py-2 border border-white text-center w-32">
+                        {item.password}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </>
