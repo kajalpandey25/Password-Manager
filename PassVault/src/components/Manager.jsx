@@ -41,10 +41,21 @@ const Manager = () => {
   };
 
   const savePassword = () => {
-    setPasswordArray([...passwordArray, form]);
-    localStorage.setItem("passwords", JSON.stringify([...passwordArray, form]));
-    console.log(passwordArray);
+    setPasswordArray([...passwordArray, {...form, id: uuidv4()}]);
+    localStorage.setItem("passwords", JSON.stringify([...passwordArray, {...form, id: uuidv4()}]));
+    console.log(passwordArray, form);
   };
+
+  const deletePassword = (id) => {
+    console.log('Deleting password with id', id);
+    setPasswordArray([...passwordArray, {...form, id: uuidv4()}]);
+
+  }
+
+  const editPassword = (id) => {
+    console.log('Editing password with id', id);
+
+  }
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -63,7 +74,7 @@ const Manager = () => {
         draggable
         pauseOnHover
         theme="light"
-        transition= "Bounce"
+        transition="Bounce"
       />
       {/* Same as */}
       <ToastContainer />
@@ -132,7 +143,7 @@ const Manager = () => {
               src="https://cdn.lordicon.com/jgnvfzqg.json"
               trigger="hover"
             ></lord-icon>
-            Add Password
+            Save
           </button>
         </div>
 
@@ -146,6 +157,7 @@ const Manager = () => {
                   <th className="py-2">Site</th>
                   <th className="py-2">Username</th>
                   <th className="py-2">Password</th>
+                  <th className="py-2">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-green-100">
@@ -176,7 +188,7 @@ const Manager = () => {
                           </div>
                         </div>
                       </td>
-                      <td className=" justify-center py-2 border border-white text-center">
+                      <td className="py-2 border border-white text-center">
                         <div className="flex items-center justify-center">
                           <span>{item.username}</span>
                           <div
@@ -198,7 +210,7 @@ const Manager = () => {
                           </div>
                         </div>
                       </td>
-                      <td className=" flex items-center justify-center py-2 border border-white text-center">
+                      <td className="py-2 border border-white text-center">
                         <div className="flex items-center justify-center">
                           <span>{item.password}</span>
                           <div
@@ -219,6 +231,22 @@ const Manager = () => {
                             ></lord-icon>
                           </div>
                         </div>
+                      </td>
+                      <td className="justify-center py-2 border border-white text-center">
+                        <span className="cursor-pointer mx-1" onClick={()=> (editPassword(item.id))}>
+                          <lord-icon
+                            src="https://cdn.lordicon.com/gwlusjdu.json"
+                            trigger="hover"
+                            style={{ width: "25px", height: "25px" }}
+                          ></lord-icon>
+                        </span>
+                        <span className="cursor-pointer mx-1" onClick={()=> (deletePassword(item.id))}>
+                          <lord-icon
+                            src="https://cdn.lordicon.com/skkahier.json"
+                            trigger="hover"
+                            style={{ width: "25px", height: "25px" }}
+                          ></lord-icon>
+                        </span>
                       </td>
                     </tr>
                   );
