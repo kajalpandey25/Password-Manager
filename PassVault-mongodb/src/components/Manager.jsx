@@ -11,11 +11,14 @@ const Manager = () => {
   const [form, setForm] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setPasswordArray] = useState([]);
 
+  const getPasswords = async () => {
+    let req = await fetch("http://localhost:3000/");
+    let passwords = await req.json();
+    console.log(passwords);
+    setPasswordArray(passwords);
+  };
   useEffect(() => {
-    let passwords = localStorage.getItem("passwords");
-    if (passwords) {
-      setPasswordArray(JSON.parse(passwords));
-    }
+    getPasswords();
   }, []);
 
   const copyText = (text) => {
@@ -43,18 +46,32 @@ const Manager = () => {
     }
   };
 
-  const savePassword = () => {
+  const savePassword = async () => {
     if (
       form.site.length > 3 &&
       form.username.length > 3 &&
       form.password.length > 3
     ) {
+      // If any such id exists in the db, delete it
+
+      await fetch("http://localhost:3000/", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: form.id }),
+      });
       setPasswordArray([...passwordArray, { ...form, id: uuidv4() }]);
-      localStorage.setItem(
-        "passwords",
-        JSON.stringify([...passwordArray, { ...form, id: uuidv4() }])
-      );
-      console.log([...passwordArray, form]);
+      await fetch("http://localhost:3000/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, id: uuidv4() }),
+      });
+      // localStorage.setItem(
+      //   "passwords",
+      //   JSON.stringify([...passwordArray, { ...form, id: uuidv4() }])
+      // );
+      // console.log([...passwordArray, form]);
+
+      // Otherwise clear the form and show toast
       setform({ site: "", username: "", password: "" });
       toast("Password saved!", {
         position: "top-right",
@@ -71,15 +88,21 @@ const Manager = () => {
     }
   };
 
-  const deletePassword = (id) => {
+  const deletePassword = async (id) => {
     console.log("Deleting password with id", id);
     let c = confirm("Do you really want to delete this password?");
     if (c) {
       setPasswordArray(passwordArray.filter((item) => item.id !== id));
-      localStorage.setItem(
-        "passwords",
-        JSON.stringify(passwordArray.filter((item) => item.id !== id))
-      );
+
+      await fetch("http://localhost:3000/", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      // localStorage.setItem(
+      //   "passwords",
+      //   JSON.stringify(passwordArray.filter((item) => item.id !== id))
+      // );
       toast("Password Deleted!", {
         position: "top-right",
         autoClose: 5000,
@@ -94,9 +117,8 @@ const Manager = () => {
   };
 
   const editPassword = (id) => {
-    console.log("Editing password with id", id);
-    setForm(passwordArray.filter((i) => i.id === id)[0]);
-    setPasswordArray(passwordArray.filter((item) => item.id !== id));
+    setform({ ...passwordArray.filter(i => i.id === id)[0], id: id })
+        setPasswordArray(passwordArray.filter(item => item.id !== id))
   };
 
   const handleChange = (e) => {
@@ -121,7 +143,9 @@ const Manager = () => {
       {/* Same as */}
       <ToastContainer />
 
-      <div className="absolute inset-0 -z-10 h-full w-full bg-green-50 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"><div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-green-400 opacity-20 blur-[100px]"></div></div>
+      <div className="absolute inset-0 -z-10 h-full w-full bg-green-50 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
+        <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-green-400 opacity-20 blur-[100px]"></div>
+      </div>
       <div className="p-3 md:mycontainer min-h-[88.2vh]">
         <h1 className="text-4xl text font-bold text-center">
           <span className="text-green-500">&lt;</span>
